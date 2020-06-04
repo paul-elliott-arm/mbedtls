@@ -56,3 +56,5 @@ massif-*
 /TAGS
 /cscope*.out
 /tags
+/*.vtg
+/*.vpwhistu

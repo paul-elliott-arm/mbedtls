@@ -1,0 +1,186 @@
+<!DOCTYPE Project SYSTEM "http://www.slickedit.com/dtd/vse/10.0/vpj.dtd">
+<Project
+	Version="10.0"
+	VendorName="SlickEdit"
+	TemplateName="Other C/C++"
+	WorkingDir="%wp">
+	<Config
+		Name="Debug"
+		Type="cpp"
+		DebugCallbackName="gdb"
+		OutputFile="%bdmbedtls"
+		CompilerConfigName="Latest Version">
+		<Menu>
+			<Target
+				Name="Compile"
+				MenuCaption="&amp;Compile"
+				CaptureOutputWith="ProcessBuffer"
+				OutputExts="*.o"
+				SaveOption="SaveCurrent"
+				RunFromDir="%rw">
+				<Exec CmdLine='cc -c -g %i %defd -o "%bd%n.o" "%f"'/>
+			</Target>
+			<Target
+				Name="Link"
+				MenuCaption="&amp;Link">
+				<Exec CmdLine='cc -g -o "%o" %f %libs'/>
+			</Target>
+			<Target
+				Name="Build"
+				MenuCaption="&amp;Build"
+				CaptureOutputWith="ProcessBuffer"
+				SaveOption="SaveWorkspaceFiles"
+				RunFromDir="%rw"
+				ClearProcessBuffer="1"
+				TimeBuild="1">
+				<Exec CmdLine="cmake --build %rp/CMakeFiles -j20"/>
+			</Target>
+			<Target
+				Name="Rebuild"
+				MenuCaption="&amp;Rebuild"
+				CaptureOutputWith="ProcessBuffer"
+				SaveOption="SaveWorkspaceFiles"
+				RunFromDir="%rw"
+				ClearProcessBuffer="1"
+				TimeBuild="1">
+				<Exec CmdLine="cmake --build %rp/CMakeFiles --target clean &amp;&amp; cmake --build %rp/CMakeFiles -j20"/>
+			</Target>
+			<Target
+				Name="Debug"
+				MenuCaption="&amp;Debug"
+				SaveOption="SaveNone"
+				BuildFirst="1"
+				CaptureOutputWith="ProcessBuffer"
+				RunFromDir="/projects/work/mbedtls/CMakeFiles/tests/">
+				<Exec CmdLine='"%(VSLICKBIN1)vsdebugio" -port 8001 -prog /projects/work/mbedtls/CMakeFiles/tests/test_suite_psa_crypto -v'/>
+			</Target>
+			<Target
+				Name="Execute"
+				MenuCaption="E&amp;xecute"
+				SaveOption="SaveNone"
+				BuildFirst="1"
+				CaptureOutputWith="ProcessBuffer"
+				RunFromDir="/projects/work/mbedtls/CMakeFiles/tests/">
+				<Exec CmdLine="/projects/work/mbedtls/CMakeFiles/tests/test_suite_psa_crypto -v"/>
+			</Target>
+			<Target
+				Name="Rebuild CMake"
+				MenuCaption="Rebuild CMake"
+				RunFromDir="%rw"
+				CaptureOutputWith="ProcessBuffer"
+				SaveOption="SaveWorkspaceFiles"
+				ClearProcessBuffer="1">
+				<Exec CmdLine='[ -d "%rpCMakeFiles" ] &amp;&amp; rm -r %rpCMakeFiles; mkdir %rpCMakeFiles; cd %rpCMakeFiles &amp;&amp; cmake -D CMAKE_BUILD_TYPE=Debug ../'/>
+			</Target>
+		</Menu>
+	</Config>
+	<Config
+		Name="Release"
+		Type="cpp"
+		DebugCallbackName="gdb"
+		OutputFile="%bdmbedtls"
+		CompilerConfigName="Latest Version">
+		<Menu>
+			<Target
+				Name="Compile"
+				MenuCaption="&amp;Compile"
+				CaptureOutputWith="ProcessBuffer"
+				SaveOption="SaveCurrent"
+				OutputExts="*.o"
+				RunFromDir="%rw">
+				<Exec CmdLine='cc -c -O %i %defd -o "%bd%n.o" "%f"'/>
+			</Target>
+			<Target
+				Name="Link"
+				MenuCaption="&amp;Link">
+				<Exec CmdLine='cc -O -o "%o" %f %libs'/>
+			</Target>
+			<Target
+				Name="Build"
+				MenuCaption="&amp;Build"
+				CaptureOutputWith="ProcessBuffer"
+				SaveOption="SaveWorkspaceFiles"
+				RunFromDir="%rw"
+				ClearProcessBuffer="1"
+				TimeBuild="1">
+				<Exec CmdLine="cmake --build %rp/CMakeFiles -j20"/>
+			</Target>
+			<Target
+				Name="Rebuild"
+				MenuCaption="&amp;Rebuild"
+				CaptureOutputWith="ProcessBuffer"
+				SaveOption="SaveWorkspaceFiles"
+				RunFromDir="%rw"
+				ClearProcessBuffer="1"
+				TimeBuild="1">
+				<Exec CmdLine="cmake --build %rp/CMakeFiles --target clean &amp;&amp; cmake --build %rp/CMakeFiles -j20"/>
+			</Target>
+			<Target
+				Name="Debug"
+				MenuCaption="&amp;Debug"
+				SaveOption="SaveNone"
+				BuildFirst="1"
+				CaptureOutputWith="ProcessBuffer"
+				RunFromDir="/projects/work/mbedtls/CMakeFiles/tests/">
+				<Exec CmdLine='"%(VSLICKBIN1)vsdebugio" -port 8001 -prog /projects/work/mbedtls/CMakeFiles/tests/test_suite_psa_crypto -v'/>
+			</Target>
+			<Target
+				Name="Execute"
+				MenuCaption="E&amp;xecute"
+				SaveOption="SaveNone"
+				BuildFirst="1"
+				CaptureOutputWith="ProcessBuffer"
+				RunFromDir="/projects/work/mbedtls/CMakeFiles/tests/">
+				<Exec CmdLine="/projects/work/mbedtls/CMakeFiles/tests/test_suite_psa_crypto -v"/>
+			</Target>
+			<Target
+				Name="Rebuild CMake"
+				MenuCaption="Rebuild CMake"
+				RunFromDir="%rw"
+				CaptureOutputWith="ProcessBuffer"
+				SaveOption="SaveWorkspaceFiles"
+				ClearProcessBuffer="1">
+				<Exec CmdLine='[ -d "%rpCMakeFiles" ] &amp;&amp; rm -r %rpCMakeFiles; mkdir %rpCMakeFiles;  cd %rpCMakeFiles &amp;&amp; cmake -D CMAKE_BUILD_TYPE=Release ../'/>
+			</Target>
+		</Menu>
+	</Config>
+	<Rules Name="Compile">
+		<Rule
+			InputExts="*.s"
+			OutputExts="*.o"
+			LinkObject="1">
+			<Exec CmdLine='as -o "%bd%n.o" "%f"'/>
+		</Rule>
+	</Rules>
+	<CustomFolders>
+		<Folder
+			Name="Source Files"
+			Filters="*.c;*.C;*.cc;*.cpp;*.cp;*.cxx;*.c++;*.prg;*.pas;*.dpr;*.asm;*.s;*.bas;*.java;*.cs;*.sc;*.scala;*.e;*.cob;*.html;*.rc;*.tcl;*.py;*.pl;*.d;*.m;*.mm;*.go;*.groovy;*.gsh"
+			GUID="{52315143-2ABE-44B1-8D66-61C467EE7DA0}"/>
+		<Folder
+			Name="Header Files"
+			Filters="*.h;*.H;*.hh;*.hpp;*.hxx;*.h++;*.inc;*.sh;*.cpy;*.if"
+			GUID="{CD71D535-F8DC-42B8-94FC-6850FB62A66B}"/>
+		<Folder
+			Name="Resource Files"
+			Filters="*.ico;*.cur;*.dlg"
+			GUID="{7C70F369-FF56-4457-AEB7-289272165127}"/>
+		<Folder
+			Name="Bitmaps"
+			Filters="*.bmp"
+			GUID="{0C1E930E-5250-4181-AFB6-6BB30EFD2F5C}"/>
+		<Folder
+			Name="Other Files"
+			Filters=""
+			GUID="{335E9443-D340-4088-A6A0-1E4783D67D9E}"></Folder>
+	</CustomFolders>
+	<Files AutoFolders="DirectoryView">
+		<F
+			N="*.*"
+			Recurse="1"
+			Excludes=".git/;.github/;.repo/;out/;CMakeFiles/;test_suite_*.c;test_suite_*.datax;*.exe"
+			L="1"/>
+	</Files>
+	<List Name="RTE">
+	</List>
+</Project>
