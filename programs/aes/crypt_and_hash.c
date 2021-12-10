@@ -510,10 +510,26 @@ int main( int argc, char *argv[] )
 
         for( i = 0; i < 8192; i++ )
         {
-            mbedtls_md_starts( &md_ctx );
-            mbedtls_md_update( &md_ctx, digest, 32 );
-            mbedtls_md_update( &md_ctx, key, keylen );
-            mbedtls_md_finish( &md_ctx, digest );
+            if( mbedtls_md_starts( &md_ctx ) != 0 )
+            {
+                mbedtls_fprintf( stderr, "mbedtls_md_starts() returned error\n" );
+                goto exit;
+            }
+            if( mbedtls_md_update( &md_ctx, digest, 32 ) != 0 )
+            {
+                mbedtls_fprintf( stderr, "mbedtls_md_update() returned error\n" );
+                goto exit;
+            }
+            if( mbedtls_md_update( &md_ctx, key, keylen ) != 0 )
+            {
+                mbedtls_fprintf( stderr, "mbedtls_md_update() returned error\n" );
+                goto exit;
+            }
+            if( mbedtls_md_finish( &md_ctx, digest ) != 0 )
+            {
+                mbedtls_fprintf( stderr, "mbedtls_md_finish() returned error\n" );
+                goto exit;
+            }
         }
 
         if( mbedtls_cipher_setkey( &cipher_ctx, digest, cipher_info->key_bitlen,
