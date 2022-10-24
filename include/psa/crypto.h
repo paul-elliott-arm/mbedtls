@@ -4112,26 +4112,25 @@ typedef struct psa_sign_operation_s psa_sign_hash_operation_t;
 typedef struct psa_verify_operation_s psa_verify_hash_operation_t;
 
 /**
- * \brief                       Set the maximum number of basic operations
- *                              allowed to be executed by an interruptible
- *                              function in a single call.
+ * \brief                       Set the maximum number of ops allowed to be
+ *                              executed by an interruptible function in a
+ *                              single call.
  *
  * \warning                     This is a beta API, and thus subject to change
  *                              at any point. It is not bound by the usual
  *                              interface stability promises, and will only
  *                              leave beta after implementation.
  *
- * \note                        The time taken to execute a single basic
- *                              operation is implementation specific and
- *                              depends on software, hardware, the algorithm,
- *                              key type and curve chosen. Even within a single
- *                              operation, successive basic operations can take
- *                              differing amounts of time. The only guarantee
- *                              is that lower values for max ops means
- *                              functions will block for a lesser maximum
- *                              amount of time and conversely larger values
- *                              will mean blocking for a larger maximum amount
- *                              of time. The functions
+ * \note                        The time taken to execute a single op is
+ *                              implementation specific and depends on
+ *                              software, hardware, the algorithm, key type and
+ *                              curve chosen. Even within a single operation,
+ *                              successive ops can take differing amounts of
+ *                              time. The only guarantee is that lower values
+ *                              for \p max_ops means functions will block for a
+ *                              lesser maximum amount of time and conversely
+ *                              larger values will mean blocking for a larger
+ *                              maximum amount of time. The functions
  *                              \c psa_sign_interruptible_get_num_ops() and
  *                              \c psa_verify_interruptible_get_num_ops() are
  *                              provided to help with tuning this value.
@@ -4143,7 +4142,7 @@ typedef struct psa_verify_operation_s psa_verify_hash_operation_t;
  *                              whole operation will be done in one go,
  *                              regardless of the number of basic operations.
  *
- * \note                        If more operations are needed to complete a
+ * \note                        If more ops are needed to complete a
  *                              computation, #PSA_OPERATION_IN_PROGRESS will be
  *                              returned by the function performing the
  *                              computation. It is then the caller's
@@ -4156,34 +4155,30 @@ typedef struct psa_verify_operation_s psa_verify_hash_operation_t;
  *                              documentation mentions they may return
  *                              #PSA_OPERATION_IN_PROGRESS.
  *
- * \param max_ops               The maximum number of basic operations to
- *                              be done in a row. Passing zero here has the
- *                              same effect as passing
- *                              #PSA_INTERRUPTIBLE_MAX_OPS_MAX - i.e the whole
- *                              operation will be done in one go.
- *
+ * \param max_ops               The maximum number of ops to be executed in a
+ *                              single call.
  */
 void psa_interruptible_set_max_ops( uint32_t max_ops );
 
 /**
- * \brief                       Get the maximum number of basic operations
- *                              allowed to be executed by an interruptible
- *                              function in a single call.
+ * \brief                       Get the maximum number of ops allowed to be
+ *                              executed by an interruptible function in a
+ *                              single call.
  *
  * \warning                     This is a beta API, and thus subject to change
  *                              at any point. It is not bound by the usual
  *                              interface stability promises, and will only
  *                              leave beta after implementation.
  *
- * \return                      Maximum number of basic operations allowed
- *                              to be executed by an interruptible function
- *                              in a single call.
+ * \return                      Maximum number of ops allowed to be
+ *                              executed by an interruptible function in a
+ *                              single call.
  */
 uint32_t psa_interruptible_get_max_ops( void );
 
 /**
- * \brief                       Get the number of basic operations that a hash
- *                              signing operation has taken so far.
+ * \brief                       Get the number of ops that a hash signing
+ *                              operation has taken so far.
  *
  * \warning                     This is a beta API, and thus subject to change
  *                              at any point. It is not bound by the usual
