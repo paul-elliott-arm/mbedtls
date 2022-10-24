@@ -4322,8 +4322,8 @@ psa_status_t psa_sign_hash_start( psa_sign_hash_operation_t *operation,
  *                              maximum time spent in a function call.
  *
  * \note                        Users should call this function on the same
- *                              context repeatedly until it either returns 0 or
- *                              an error. This function will return
+ *                              operation object repeatedly until it either
+ *                              returns 0 or an error. This function will return
  *                              #PSA_OPERATION_IN_PROGRESS if there is more work
  *                              to do.
  *
@@ -4358,7 +4358,7 @@ psa_status_t psa_sign_hash_start( psa_sign_hash_operation_t *operation,
  * \retval #PSA_OPERATION_IN_PROGRESS
  *         Operation was interrupted due to the setting of \c
  *         psa_interruptible_set_max_ops(), there is still work to be done,
- *         please call this function again with the same parameters.
+ *         please call this function again with the same operation object.
  *
  * \retval #PSA_ERROR_BUFFER_TOO_SMALL
  *         The size of the \p signature buffer is too small. You can
@@ -4442,7 +4442,7 @@ psa_status_t psa_sign_hash_abort( psa_sign_hash_operation_t *operation );
  *                              maximum time spent in a function.
  *
  * \note                        Users should call \c psa_verify_hash_complete()
- *                              repeatedly on the same context after a
+ *                              repeatedly on the same operation object after a
  *                              successful call to this function until \c
  *                              psa_verify_hash_complete() either returns 0 or
  *                              an error. \c psa_verify_hash_complete() will
@@ -4516,8 +4516,8 @@ psa_status_t psa_verify_hash_start( psa_verify_hash_operation_t *operation,
  *                              call.
  *
  * \note                        Users should call this function on the same
- *                              context repeatedly until it either returns 0 or
- *                              an error. This function will return
+ *                              operation object repeatedly until it either
+ *                              returns 0 or an error. This function will return
  *                              #PSA_OPERATION_IN_PROGRESS if there is more work
  *                              to do.
  *
@@ -4537,7 +4537,7 @@ psa_status_t psa_verify_hash_start( psa_verify_hash_operation_t *operation,
  * \retval #PSA_OPERATION_IN_PROGRESS
  *         Operation was interrupted due to the setting of \c
  *         psa_interruptible_set_max_ops(), there is still work to be done,
- *         please call this function again with the same parameters.
+ *         please call this function again with the same operation object.
  *
  * \retval #PSA_ERROR_INVALID_HANDLE
  * \retval #PSA_ERROR_NOT_PERMITTED
