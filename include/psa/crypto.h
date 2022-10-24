@@ -4178,7 +4178,12 @@ uint32_t psa_interruptible_get_max_ops( void );
 
 /**
  * \brief                       Get the number of ops that a hash signing
- *                              operation has taken so far.
+ *                              operation has taken so far. If the operation
+ *                              has completed, then this should represent the
+ *                              number of ops required for the entire
+ *                              operations, so long as the operation structure
+ *                              has not been reset in the meantime, in which
+ *                              case a value of 0 would be returned.
  *
  * \warning                     This is a beta API, and thus subject to change
  *                              at any point. It is not bound by the usual
@@ -4192,12 +4197,19 @@ uint32_t psa_interruptible_get_max_ops( void );
  * \param operation             The \c psa_sign_hash_operation_t to
  *                              use. This must be initialized first.
  *
+ * \return                      Number of ops that the operation has taken so
+ *                              far.
  */
-size_t psa_sign_get_num_ops( psa_sign_hash_operation_t *operation );
+uint32_t psa_sign_get_num_ops( psa_sign_hash_operation_t *operation );
 
 /**
- * \brief                       Get the number of basic operations that a hash
- *                              verification operation has taken so far.
+ * \brief                       Get the number of ops that a hash verification
+ *                              operation has taken so far. If the operation
+ *                              has completed, then this should represent the
+ *                              number of ops required for the entire
+ *                              operations, so long as the operation structure
+ *                              has not been reset in the meantime, in which
+ *                              case a value of 0 would be returned.
  *
  * \warning                     This is a beta API, and thus subject to change
  *                              at any point. It is not bound by the usual
@@ -4211,8 +4223,10 @@ size_t psa_sign_get_num_ops( psa_sign_hash_operation_t *operation );
  * \param operation             The \c psa_verify_hash_operation_t to
  *                              use. This must be initialized first.
  *
+ * \return                      Number of ops that the operation has taken so
+ *                              far.
  */
-size_t psa_verify_get_num_ops( psa_verify_hash_operation_t *operation );
+uint32_t psa_verify_get_num_ops( psa_verify_hash_operation_t *operation );
 
 /**
  * \brief                       Start signing a hash or short message with a
