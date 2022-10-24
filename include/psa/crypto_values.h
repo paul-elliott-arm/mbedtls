@@ -2740,9 +2740,10 @@ static inline int mbedtls_svc_key_id_is_null( mbedtls_svc_key_id_t key )
  */
 
 /** Maximum value for use with \c psa_interruptible_set_max_ops() to determine
- *  the maximum number of basic operations allowed to be executed by an
- *  interruptible function in a single call. */
-#define PSA_INTERRUPTIBLE_MAX_OPS_MAX INT32_MAX
+ *  the maximum number of ops allowed to be executed by an interruptible
+ *  function in a single call.
+ */
+#define PSA_INTERRUPTIBLE_MAX_OPS_UNLIMITED INT32_MAX
 
 /**@}*/
 

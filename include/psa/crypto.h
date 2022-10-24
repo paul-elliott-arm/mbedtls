@@ -4138,9 +4138,9 @@ typedef struct psa_verify_operation_s psa_verify_hash_operation_t;
  * \note                        Although the interpretation of this value is
  *                              implicitly implementation defined, this value
  *                              needed a default, thus this value defaults to
- *                              #PSA_INTERRUPTIBLE_MAX_OPS_MAX, which means the
- *                              whole operation will be done in one go,
- *                              regardless of the number of basic operations.
+ *                              #PSA_INTERRUPTIBLE_MAX_OPS_UNLIMITED, which
+ *                              means the whole operation will be done in one
+ *                              go, regardless of the number of ops required.
  *
  * \note                        If more ops are needed to complete a
  *                              computation, #PSA_OPERATION_INCOMPLETE will be
