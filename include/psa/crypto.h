@@ -4151,12 +4151,37 @@ typedef struct psa_verify_operation_s psa_verify_hash_operation_t;
  *                              code; or to free the relevant context if the
  *                              operation is to be aborted.
  *
+ * \note                        The interpretation of this maximum number is
+ *                              obviously also implementation defined. On a
+ *                              hard real time system, this can indicate a hard
+ *                              deadline, which is good, as a real-time system
+ *                              needs a guarantee of not spending more than X
+ *                              time, however care must be taken to avoid the
+ *                              situation whereby calls just return, not being
+ *                              able to do any actual work within the allotted
+ *                              time.  On a non-real-time system, the
+ *                              implementation can be more relaxed, but again
+ *                              whether this number should be interpreted as as
+ *                              hard or soft limit or even whether a less than
+ *                              or equals as regards to ops executed in a
+ *                              single call is implementation defined.
+ *
+ * \warning                     With implementations that interpret this number
+ *                              as a hard limit, setting this number too small
+ *                              may result in an infinite loop, whereby each
+ *                              call results in immediate return with no ops
+ *                              done (as there is not enough time to execute
+ *                              any), and thus no result will ever be achieved.
+ *
  * \note                        This only applies to functions whose
  *                              documentation mentions they may return
  *                              #PSA_OPERATION_INCOMPLETE.
  *
  * \param max_ops               The maximum number of ops to be executed in a
- *                              single call.
+ *                              single call, this can be a number from 0 to
+ *                              #PSA_INTERRUPTIBLE_MAX_OPS_UNLIMITED, where 0
+ *                              is obviously the least amount of work done per
+ *                              call.
  */
 void psa_interruptible_set_max_ops( uint32_t max_ops );
 
