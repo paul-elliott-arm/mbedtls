@@ -4143,7 +4143,7 @@ typedef struct psa_verify_operation_s psa_verify_hash_operation_t;
  *                              regardless of the number of basic operations.
  *
  * \note                        If more ops are needed to complete a
- *                              computation, #PSA_OPERATION_IN_PROGRESS will be
+ *                              computation, #PSA_OPERATION_INCOMPLETE will be
  *                              returned by the function performing the
  *                              computation. It is then the caller's
  *                              responsibility to either call again with the
@@ -4153,7 +4153,7 @@ typedef struct psa_verify_operation_s psa_verify_hash_operation_t;
  *
  * \note                        This only applies to functions whose
  *                              documentation mentions they may return
- *                              #PSA_OPERATION_IN_PROGRESS.
+ *                              #PSA_OPERATION_INCOMPLETE.
  *
  * \param max_ops               The maximum number of ops to be executed in a
  *                              single call.
@@ -4252,7 +4252,7 @@ uint32_t psa_verify_get_num_ops( psa_verify_hash_operation_t *operation );
  *                              successful call to this function until \c
  *                              psa_sign_hash_complete() either returns 0 or an
  *                              error. \c psa_sign_hash_complete() will return
- *                              #PSA_OPERATION_IN_PROGRESS if there is more work
+ *                              #PSA_OPERATION_INCOMPLETE if there is more work
  *                              to do.
  *
  * \note                        If this function returns an error status, the
@@ -4324,7 +4324,7 @@ psa_status_t psa_sign_hash_start( psa_sign_hash_operation_t *operation,
  * \note                        Users should call this function on the same
  *                              operation object repeatedly until it either
  *                              returns 0 or an error. This function will return
- *                              #PSA_OPERATION_IN_PROGRESS if there is more work
+ *                              #PSA_OPERATION_INCOMPLETE if there is more work
  *                              to do.
  *
  * \note                        When this function returns successfully, the
@@ -4355,7 +4355,7 @@ psa_status_t psa_sign_hash_start( psa_sign_hash_operation_t *operation,
  * \retval #PSA_SUCCESS
  *         Operation completed successfully
  *
- * \retval #PSA_OPERATION_IN_PROGRESS
+ * \retval #PSA_OPERATION_INCOMPLETE
  *         Operation was interrupted due to the setting of \c
  *         psa_interruptible_set_max_ops(), there is still work to be done,
  *         please call this function again with the same operation object.
@@ -4446,7 +4446,7 @@ psa_status_t psa_sign_hash_abort( psa_sign_hash_operation_t *operation );
  *                              successful call to this function until \c
  *                              psa_verify_hash_complete() either returns 0 or
  *                              an error. \c psa_verify_hash_complete() will
- *                              return #PSA_OPERATION_IN_PROGRESS if there is
+ *                              return #PSA_OPERATION_INCOMPLETE if there is
  *                              more work to do.
  *
  * \note                        If this function returns an error status, the
@@ -4518,7 +4518,7 @@ psa_status_t psa_verify_hash_start( psa_verify_hash_operation_t *operation,
  * \note                        Users should call this function on the same
  *                              operation object repeatedly until it either
  *                              returns 0 or an error. This function will return
- *                              #PSA_OPERATION_IN_PROGRESS if there is more work
+ *                              #PSA_OPERATION_INCOMPLETE if there is more work
  *                              to do.
  *
  * \note                        When this function returns successfully, the
@@ -4534,7 +4534,7 @@ psa_status_t psa_verify_hash_start( psa_verify_hash_operation_t *operation,
   \retval #PSA_SUCCESS
  *         Operation completed successfully, and the passed signature is valid.
  *
- * \retval #PSA_OPERATION_IN_PROGRESS
+ * \retval #PSA_OPERATION_INCOMPLETE
  *         Operation was interrupted due to the setting of \c
  *         psa_interruptible_set_max_ops(), there is still work to be done,
  *         please call this function again with the same operation object.

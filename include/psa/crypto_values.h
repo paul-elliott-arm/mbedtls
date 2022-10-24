@@ -328,12 +328,12 @@
  */
 #define PSA_ERROR_DATA_INVALID          ((psa_status_t)-153)
 
-/** The function that returns this error is defined as interruptible and
+/** The function that returns this status is defined as interruptible and
  *  still has work to do, thus the user should call the function again with the
  *  same parameters until it either returns #PSA_SUCCESS or any other error.
  *  This is not an error per se, more a notification of status.
  */
-#define PSA_OPERATION_IN_PROGRESS           ((psa_status_t)-278)
+#define PSA_OPERATION_INCOMPLETE           ((psa_status_t)-248)
 
 /**@}*/
 
