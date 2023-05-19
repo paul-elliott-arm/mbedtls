@@ -28,6 +28,8 @@
 
 #include "mbedtls/platform.h"
 
+#include "constant_time_internal.h"
+
 #include "bn_mul.h"
 #include "bignum_core.h"
 #include "ecp_invasive.h"
@@ -5515,6 +5517,42 @@ int mbedtls_ecp_mod_p448(mbedtls_mpi_uint *X, size_t X_limbs)
         goto cleanup;
     }
 
+    const size_t P_limbs = M_limbs;
+    mbedtls_mpi_uint *P = mbedtls_calloc(P_limbs, ciL);
+
+    if (P == NULL) {
+        ret =  MBEDTLS_ERR_ECP_ALLOC_FAILED;
+        goto cleanup;
+    }
+
+    /* Load P with the p448 modulus value. */
+    memset(P, 0, (P_limbs * ciL));
+
+ #if defined(MBEDTLS_HAVE_INT64)
+    P[0] = 0xffffffffffffffff;
+    P[1] = 0xffffffffffffffff;
+    P[2] = 0xffffffffffffffff;
+    P[3] = 0xfffffffeffffffff;
+    P[4] = 0xffffffffffffffff;
+    P[5] = 0xffffffffffffffff;
+    P[6] = 0xffffffffffffffff;
+#elif defined(MBEDTLS_HAVE_INT32)
+    P[0] = 0xffffffff;
+    P[1] = 0xffffffff;
+    P[2] = 0xffffffff;
+    P[3] = 0xffffffff;
+    P[4] = 0xffffffff;
+    P[5] = 0xffffffff;
+    P[6] = 0xfffffffe;
+    P[7] = 0xffffffff;
+    P[8] = 0xffffffff;
+    P[9] = 0xffffffff;
+    P[10] = 0xffffffff;
+    P[11] = 0xffffffff;
+    P[12] = 0xffffffff;
+    P[13] = 0xffffffff;
+#endif /* defined MBEDTLS_HAVE_INT64/MBEDTLS_HAVE_INT32*/
+
     /* M = A1 */
     memset(M, 0, (M_limbs * ciL));
 
@@ -5529,6 +5567,11 @@ int mbedtls_ecp_mod_p448(mbedtls_mpi_uint *X, size_t X_limbs)
 
     /* X += A1 - Carry here dealt with by oversize M and X. */
     (void) mbedtls_mpi_core_add(X, X, M, M_limbs);
+
+    /* Deal with carry bit from add by subtracting P if necessary. */
+    if (X[P448_WIDTH] != 0) {
+        mbedtls_mpi_core_sub(X, X, P, P_limbs);
+    }
 
     /* Q = B1, X += B1 */
     memcpy(Q, M, (Q_limbs * ciL));
@@ -5552,11 +5595,24 @@ int mbedtls_ecp_mod_p448(mbedtls_mpi_uint *X, size_t X_limbs)
     mbedtls_mpi_core_shift_l(M, M_limbs, 224);
     (void) mbedtls_mpi_core_add(X, X, M, M_limbs);
 
+    /* Deal with carry bit by subtracting P if necessary. */
+    if (X[P448_WIDTH] != 0) {
+        mbedtls_mpi_core_sub(X, X, P, P_limbs);
+    }
+
+    /* Returned result should be 0 < X < P. Although we have controlled bit
+     * width, we may still have a result which is greater than P. Subtract P
+     * if this is the case. */
+    if (mbedtls_mpi_core_lt_ct(P, X, P_limbs)) {
+        mbedtls_mpi_core_sub(X, X, P, P_limbs);
+    }
+
     ret = 0;
 
 cleanup:
     mbedtls_free(M);
     mbedtls_free(Q);
+    mbedtls_free(P);
 
     return ret;
 }
