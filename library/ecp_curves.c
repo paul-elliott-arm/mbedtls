@@ -5535,12 +5535,12 @@ int mbedtls_ecp_mod_p448(mbedtls_mpi_uint *X, size_t X_limbs)
     /* Carry here fits in oversize X. Oversize M means it will get
      * added in, not returned as carry. */
     (void) mbedtls_mpi_core_add(X, X, M, M_limbs);
-
+#if 0
     /* Deal with carry bit from add by subtracting P if necessary. */
     if (X[P448_WIDTH] != 0) {
         mbedtls_mpi_core_sub(X, X, P, P_limbs);
     }
-
+#endif
     /* Q = B1 */
     memcpy(Q, M, (Q_limbs * ciL));
     mbedtls_mpi_core_shift_r(Q, Q_limbs, 224);
@@ -5569,10 +5569,47 @@ int mbedtls_ecp_mod_p448(mbedtls_mpi_uint *X, size_t X_limbs)
     /* X = X + M = (A0 + A1 + B1) + (B0 + B1) * 2^224 */
     (void) mbedtls_mpi_core_add(X, X, M, M_limbs);
 
+    /* In the second and third rounds A1 and B0 have at most 1 non-zero chunk
+     *and B1=0. Using this we need to calculate A0 + A1 + B1 + (B0 + B1) * 2^224
+     *= A0 + A1 + B0 * 2^224. Here we can construct A1 + B0 * 2^224 in a
+     *temporary directly without any call to mbedtls_mpi_core_add() (both of
+     *them are all zero except in a single, non-colliding limb). This means, the
+     *single call to mbedtls_mpi_core_add() we need to make will calculate the
+     *end result A0 + (A1 + B0 * 2^224) */
+
+    for (round = 0; round < 2; ++round) {
+
+        /* Q = A1 */
+        memset(M, 0, (M_limbs * ciL));
+        /* Do not copy into the overflow limb, as this would read past the end of
+         * X. */
+        memcpy(M, X + P448_WIDTH, ((M_limbs - 1) * ciL));
+
+        /* X = A0 */
+        memset(X + P448_WIDTH, 0, ((M_limbs - 1) * ciL));
+
+        /* M = B0 */
+        memcpy(Q, M, ((Q_limbs) * ciL));
+
+        if (sizeof(mbedtls_mpi_uint) > 4) {
+            Q[P224_WIDTH_MIN] &= ((mbedtls_mpi_uint) -1) >> (P224_UNUSED_BITS);
+        }
+        for (i = P224_WIDTH_MAX; i < Q_limbs; ++i) {
+            Q[i] = 0;
+        }
+
+        memset(Q + P224_WIDTH_MAX, 0, ((Q_limbs - P224_WIDTH_MAX) * ciL));
+
+
+
+
+    }
+ #if 0
     /* Deal with carry bit by subtracting P if necessary. */
     if (X[P448_WIDTH] != 0) {
         mbedtls_mpi_core_sub(X, X, P, P_limbs);
     }
+#endif
 
     /* Returned result should be 0 < X < P. Although we have controlled bit
      * width, we may still have a result which is greater than P. Subtract P
