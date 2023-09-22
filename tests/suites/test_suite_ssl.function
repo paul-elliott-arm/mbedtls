@@ -3059,10 +3059,10 @@ exit:
 }
 /* END_CASE */
 
-/* BEGIN_CASE
- * depends_on:MBEDTLS_ECP_C:!MBEDTLS_DEPRECATED_REMOVED:!MBEDTLS_DEPRECATED_WARNING:MBEDTLS_ECP_DP_SECP192R1_ENABLED:MBEDTLS_ECP_DP_SECP224R1_ENABLED:MBEDTLS_ECP_DP_SECP256R1_ENABLED*/
+/* BEGIN_CASE */
 void conf_curve()
 {
+#if defined(MBEDTLS_ECP_C) && !defined(MBEDTLS_DEPRECATED_REMOVED)
 
     mbedtls_ecp_group_id curve_list[] = { MBEDTLS_ECP_DP_SECP192R1,
                                           MBEDTLS_ECP_DP_SECP224R1,
@@ -3082,6 +3082,8 @@ void conf_curve()
     mbedtls_ssl_conf_max_tls_version(&conf, MBEDTLS_SSL_VERSION_TLS1_3);
     mbedtls_ssl_conf_min_tls_version(&conf, MBEDTLS_SSL_VERSION_TLS1_3);
 #endif
+
+
     mbedtls_ssl_conf_curves(&conf, curve_list);
 
     mbedtls_ssl_context ssl;
@@ -3105,6 +3107,8 @@ exit:
     mbedtls_ssl_free(&ssl);
     mbedtls_ssl_config_free(&conf);
     MD_OR_USE_PSA_DONE();
+
+#endif /* defined(MBEDTLS_ECP_C) && !defined(MBEDTLS_DEPRECATED_REMOVED) */
 }
 /* END_CASE */
 
