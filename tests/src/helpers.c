@@ -42,6 +42,15 @@ mbedtls_test_result_t mbedtls_test_get_result(void)
     return mbedtls_test_info.result;
 }
 
+void mbedtls_test_set_result(mbedtls_test_result_t result, const char *test,
+                             int line_no, const char *filename)
+{
+    mbedtls_test_info.result = result;
+    mbedtls_test_info.test = test;
+    mbedtls_test_info.line_no = line_no;
+    mbedtls_test_info.filename = filename;
+}
+
 const char* mbedtls_test_get_test(void)
 {
     return mbedtls_test_info.test;
@@ -66,14 +75,37 @@ unsigned long mbedtls_test_get_step(void)
     return mbedtls_test_info.step;
 }
 
+void mbedtls_test_set_step(unsigned long step) {
+    mbedtls_test_info.step = step;
+}
+
 const char* mbedtls_test_get_line1(void)
 {
     return mbedtls_test_info.line1;
 }
+
+void mbedtls_test_set_line1(const char *line)
+{
+    if (line == NULL) {
+        memset(mbedtls_test_info.line1, 0, sizeof(mbedtls_test_info.line1));
+    } else {
+        strncpy(mbedtls_test_info.line1, line, sizeof(mbedtls_test_info.line1));
+    }
+}
+
 const char* mbedtls_test_get_line2(void)
 {
     return mbedtls_test_info.line2;
 }
+
+void mbedtls_test_set_line2(const char *line) {
+    if (line == NULL) {
+        memset(mbedtls_test_info.line2, 0, sizeof(mbedtls_test_info.line2));
+    } else {
+        strncpy(mbedtls_test_info.line2, line, sizeof(mbedtls_test_info.line2));
+    }
+}
+
 
 #if defined(MBEDTLS_TEST_MUTEX_USAGE)
 const char* mbedtls_test_get_mutex_usage_error(void)
@@ -138,28 +170,17 @@ int mbedtls_test_ascii2uc(const char c, unsigned char *uc)
 
 void mbedtls_test_fail(const char *test, int line_no, const char *filename)
 {
-    if (mbedtls_test_info.result == MBEDTLS_TEST_RESULT_FAILED) {
+    if (mbedtls_test_get_result() == MBEDTLS_TEST_RESULT_FAILED) {
         /* We've already recorded the test as having failed. Don't
          * overwrite any previous information about the failure. */
         return;
     }
-    mbedtls_test_info.result = MBEDTLS_TEST_RESULT_FAILED;
-    mbedtls_test_info.test = test;
-    mbedtls_test_info.line_no = line_no;
-    mbedtls_test_info.filename = filename;
+    mbedtls_test_set_result(MBEDTLS_TEST_RESULT_FAILED, test, line_no, filename);
 }
 
 void mbedtls_test_skip(const char *test, int line_no, const char *filename)
 {
-    mbedtls_test_info.result = MBEDTLS_TEST_RESULT_SKIPPED;
-    mbedtls_test_info.test = test;
-    mbedtls_test_info.line_no = line_no;
-    mbedtls_test_info.filename = filename;
-}
-
-void mbedtls_test_set_step(unsigned long step)
-{
-    mbedtls_test_info.step = step;
+    mbedtls_test_set_result(MBEDTLS_TEST_RESULT_SKIPPED, test, line_no, filename);
 }
 
 #if defined(MBEDTLS_BIGNUM_C)
@@ -168,13 +189,11 @@ unsigned mbedtls_test_case_uses_negative_0 = 0;
 
 void mbedtls_test_info_reset(void)
 {
-    mbedtls_test_info.result = MBEDTLS_TEST_RESULT_SUCCESS;
-    mbedtls_test_info.step = (unsigned long) (-1);
-    mbedtls_test_info.test = 0;
-    mbedtls_test_info.line_no = 0;
-    mbedtls_test_info.filename = 0;
-    memset(mbedtls_test_info.line1, 0, sizeof(mbedtls_test_info.line1));
-    memset(mbedtls_test_info.line2, 0, sizeof(mbedtls_test_info.line2));
+    mbedtls_test_set_result(MBEDTLS_TEST_RESULT_SUCCESS, 0, 0, 0);
+    mbedtls_test_set_step((unsigned long) (-1));
+    mbedtls_test_set_line1(NULL);
+    mbedtls_test_set_line2(NULL);
+
 #if defined(MBEDTLS_BIGNUM_C)
     mbedtls_test_case_uses_negative_0 = 0;
 #endif
@@ -190,20 +209,21 @@ int mbedtls_test_equal(const char *test, int line_no, const char *filename,
         return 1;
     }
 
-    if (mbedtls_test_info.result == MBEDTLS_TEST_RESULT_FAILED) {
+    if (mbedtls_test_get_result() == MBEDTLS_TEST_RESULT_FAILED) {
         /* We've already recorded the test as having failed. Don't
          * overwrite any previous information about the failure. */
         return 0;
     }
+    char buf[MBEDTLS_TEST_LINE_LENGTH];
     mbedtls_test_fail(test, line_no, filename);
-    (void) mbedtls_snprintf(mbedtls_test_info.line1,
-                            sizeof(mbedtls_test_info.line1),
+    (void) mbedtls_snprintf(buf, sizeof(buf),
                             "lhs = 0x%016llx = %lld",
                             value1, (long long) value1);
-    (void) mbedtls_snprintf(mbedtls_test_info.line2,
-                            sizeof(mbedtls_test_info.line2),
+    mbedtls_test_set_line1(buf);
+    (void) mbedtls_snprintf(buf, sizeof(buf),
                             "rhs = 0x%016llx = %lld",
                             value2, (long long) value2);
+    mbedtls_test_set_line2(buf);
     return 0;
 }
 
@@ -217,20 +237,21 @@ int mbedtls_test_le_u(const char *test, int line_no, const char *filename,
         return 1;
     }
 
-    if (mbedtls_test_info.result == MBEDTLS_TEST_RESULT_FAILED) {
+    if (mbedtls_test_get_result() == MBEDTLS_TEST_RESULT_FAILED) {
         /* We've already recorded the test as having failed. Don't
          * overwrite any previous information about the failure. */
         return 0;
     }
+    char buf[MBEDTLS_TEST_LINE_LENGTH];
     mbedtls_test_fail(test, line_no, filename);
-    (void) mbedtls_snprintf(mbedtls_test_info.line1,
-                            sizeof(mbedtls_test_info.line1),
+    (void) mbedtls_snprintf(buf, sizeof(buf),
                             "lhs = 0x%016llx = %llu",
                             value1, value1);
-    (void) mbedtls_snprintf(mbedtls_test_info.line2,
-                            sizeof(mbedtls_test_info.line2),
+    mbedtls_test_set_line1(buf);
+    (void) mbedtls_snprintf(buf, sizeof(buf),
                             "rhs = 0x%016llx = %llu",
                             value2, value2);
+    mbedtls_test_set_line2(buf);
     return 0;
 }
 
@@ -244,20 +265,21 @@ int mbedtls_test_le_s(const char *test, int line_no, const char *filename,
         return 1;
     }
 
-    if (mbedtls_test_info.result == MBEDTLS_TEST_RESULT_FAILED) {
+    if (mbedtls_test_get_result() == MBEDTLS_TEST_RESULT_FAILED) {
         /* We've already recorded the test as having failed. Don't
          * overwrite any previous information about the failure. */
         return 0;
     }
+    char buf[MBEDTLS_TEST_LINE_LENGTH];
     mbedtls_test_fail(test, line_no, filename);
-    (void) mbedtls_snprintf(mbedtls_test_info.line1,
-                            sizeof(mbedtls_test_info.line1),
+    (void) mbedtls_snprintf(buf, sizeof(buf),
                             "lhs = 0x%016llx = %lld",
                             (unsigned long long) value1, value1);
-    (void) mbedtls_snprintf(mbedtls_test_info.line2,
-                            sizeof(mbedtls_test_info.line2),
+    mbedtls_test_set_line1(buf);
+    (void) mbedtls_snprintf(buf, sizeof(buf),
                             "rhs = 0x%016llx = %lld",
                             (unsigned long long) value2, value2);
+    mbedtls_test_set_line2(buf);
     return 0;
 }
 
