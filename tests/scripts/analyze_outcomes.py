@@ -237,6 +237,13 @@ KNOWN_TASKS = {
                     # doesn't, we have a PASS vs SKIP mismatch.
                     'Check mbedtls_calloc overallocation',
                 ],
+                'test_suite_ctr_drbg': [
+                    # Threaded tests will be skipped on non SHA512 builds,
+                    # but these do not necessarily match between reference and
+                    # driver components.
+                    'CTR_DRBG Threads: no reseed',
+                    'CTR_DRBG Threads: reseed',
+                ],
             }
         }
     },
