@@ -2159,6 +2159,7 @@ component_test_valgrind_constant_flow_psa () {
 
 component_test_tsan () {
     msg "build: TSan (clang)"
+    scripts/config.py full
     scripts/config.py set MBEDTLS_THREADING_C
     scripts/config.py set MBEDTLS_THREADING_PTHREAD
 
